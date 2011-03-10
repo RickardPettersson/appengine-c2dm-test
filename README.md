@@ -1,6 +1,6 @@
 # AppEngine C2DM Test
 
-This repository contains a AppEngine Java Servlet that are a project of Rickard Pettersson for testing C2DM
+This repository contains a AppEngine Java Servlet that are a project of Rickard Pettersson (http://www.RickardP.se) for testing C2DM
 
 The project is only for testing and learning how C2DM working, its logging everything to LogCat in Eclipse.
 
