@@ -6,39 +6,42 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 @SuppressWarnings("serial")
 public class AppEngine_C2DM_TestServlet extends HttpServlet {
-	private static final Logger log = Logger
-			.getLogger(AppEngine_C2DM_TestServlet.class.getName());
 
-	private static String AuthToken = "YourFirstAuthtoken";
-	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
 
 		StringBuilder data = new StringBuilder();
-		data.append("registration_id=theDeviceRegistraionID");
+
+		data.append("registration_id=" + ServerConfig.DeviceRegistrationID);
+
+		// Collapse key is for grouping messages and only the last sent message
+		// with the same key going to be sent to the phone when the phone is
+		// ready to get the message if its not from the beginning
 		data.append("&collapse_key=test");
+
+		// Here is the message we sending, key1 can be changed to what you whant
+		// or if you whant to send more then one you can do (i think, not tested
+		// yet), Testing is the message here.
 		data.append("&data.key1=Testing");
-		data.append("&delay_while_idle=1");
-		data.append("&service=ac2dm");
+
+		// If you whant the message to wait to the phone is not idle then set
+		// this parameter
+		// data.append("&delay_while_idle=1");
 
 		byte[] postData = data.toString().getBytes("UTF-8");
 
-		// URLEncoder.encode("key1", "UTF-8")
-
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(AuthToken + " - ");
-		
+		sb.append(ServerConfig.AuthToken + " - ");
+
 		try {
 			// Send data
 			URL url = new URL("https://android.clients.google.com/c2dm/send");
@@ -51,9 +54,8 @@ public class AppEngine_C2DM_TestServlet extends HttpServlet {
 					"application/x-www-form-urlencoded;charset=UTF-8");
 			conn.setRequestProperty("Content-Length",
 					Integer.toString(postData.length));
-			conn.setRequestProperty(
-					"Authorization",
-					"GoogleLogin auth=" + AuthToken);
+			conn.setRequestProperty("Authorization", "GoogleLogin auth="
+					+ ServerConfig.AuthToken);
 
 			OutputStream out = conn.getOutputStream();
 			out.write(postData);
@@ -74,7 +76,7 @@ public class AppEngine_C2DM_TestServlet extends HttpServlet {
 						String updatedAuthToken = conn
 								.getHeaderField("Update-Client-Auth");
 						if (updatedAuthToken != null) {
-							AuthToken = updatedAuthToken;
+							ServerConfig.AuthToken = updatedAuthToken;
 							sb.append("updatedAuthToken = \""
 									+ updatedAuthToken + "\"");
 						}
@@ -86,7 +88,7 @@ public class AppEngine_C2DM_TestServlet extends HttpServlet {
 						if (!sb.toString().equals("")) {
 							sb.append(" - ");
 						}
-						
+
 						if (responseLine == null || responseLine.equals("")) {
 							sb.append("Got responsecode "
 									+ responseCode
@@ -103,7 +105,7 @@ public class AppEngine_C2DM_TestServlet extends HttpServlet {
 			if (!sb.toString().equals("")) {
 				sb.append(" - ");
 			}
-			
+
 			sb.append("Exception: " + e.toString());
 		}
 

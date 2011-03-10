@@ -11,21 +11,24 @@ public class GetAuthFromGoogle extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		
+
 		StringBuilder url = new StringBuilder();
-		
+
 		url.append("https://www.google.com/accounts/ClientLogin");
-		url.append("?Email=" + URLEncoder.encode("yourgoogleaccount", "UTF-8"));
-		url.append("&Passwd=" + URLEncoder.encode("yourpassword", "UTF-8"));
+		url.append("?Email="
+				+ URLEncoder.encode(ServerConfig.GoogleAccount, "UTF-8"));
+		url.append("&Passwd="
+				+ URLEncoder
+						.encode(ServerConfig.GoogleAccountPassword, "UTF-8"));
 		url.append("&accountType=GOOGLE");
 		url.append("&source=Test-C2DM");
 		url.append("&service=ac2dm");
-		
+
 		String result = download(url.toString());
-		
+
 		resp.getWriter().println(result);
 	}
-	
+
 	public static String download(String url) throws java.io.IOException {
 		java.io.InputStream s = null;
 		java.io.InputStreamReader r = null;
